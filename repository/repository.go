@@ -7,6 +7,7 @@ import (
 // StoreRepository - Repositório para persistencia de um estabelecimento
 type StoreRepository interface {
 	Create(store *domain.Store) (*domain.Store, error)
+	RemoveStore(id string) error
 	Get(id string) (*domain.Store, error)
 	GetStore(name string) (*domain.Store, error)
 	AddConsumer(id string, consumer *domain.Consumer) error

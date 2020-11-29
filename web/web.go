@@ -26,6 +26,17 @@ func Run(done chan string) {
 		c.JSON(200, store)
 	})
 
+	router.PUT("/remove/:storeid", func(c *gin.Context) {
+		id := c.Param("storeid")
+
+		err := svc.RemoveStore(id)
+		if err != nil {
+			c.Error(err)
+		}
+
+		c.JSON(200, nil)
+	})
+
 	router.GET("/getstore/:name", func(c *gin.Context) {
 		name := c.Param("name")
 

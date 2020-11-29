@@ -12,9 +12,10 @@ import (
 )
 
 const (
-	ERROR_ARGUMENT_NOT_VALID_ADD_STORE = "Os parametros para inserção do estabelecimento devem ser preenchidas"
-	ERROR_ARGUMENT_NOT_VALID_ADD       = "Os parametros para inserção de consumidor devem ser preenchidas"
-	ERROR_ARGUMENT_NOT_VALID_REMOVE    = "Os parametros para remoção de consumidor devem ser preenchidas"
+	ERROR_ARGUMENT_NOT_VALID_ADD_STORE    = "Os parametros para inserção do estabelecimento devem ser preenchidas"
+	ERROR_ARGUMENT_NOT_VALID_REMOVE_STORE = "Os parametros para remoção do estabelecimento devem ser preenchidas"
+	ERROR_ARGUMENT_NOT_VALID_ADD          = "Os parametros para inserção de consumidor devem ser preenchidas"
+	ERROR_ARGUMENT_NOT_VALID_REMOVE       = "Os parametros para remoção de consumidor devem ser preenchidas"
 )
 
 type StoreServiceImpl struct {
@@ -55,6 +56,20 @@ func (svc *StoreServiceImpl) Create(URLname, name string) (*domain.Store, error)
 	}
 
 	return newStore, nil
+}
+
+func (svc *StoreServiceImpl) RemoveStore(id string) error {
+
+	if id == "" {
+		return errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE_STORE)
+	}
+
+	err := svc.storeRepository.RemoveStore(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (svc *StoreServiceImpl) GetStore(name string) (*domain.Store, error) {

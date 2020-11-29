@@ -44,6 +44,21 @@ func (repo *StoreMockRepositoryImpl) Create(store *domain.Store) (*domain.Store,
 	return store, nil
 }
 
+func (repo *StoreMockRepositoryImpl) RemoveStore(id string) error {
+
+	for i, elem := range repo.mockStore.aStore {
+		if elem.ID == id {
+			copy(repo.mockStore.aStore[i:], repo.mockStore.aStore[i+1:])
+			repo.mockStore.aStore[len(repo.mockStore.aStore)-1] = nil
+			repo.mockStore.aStore = repo.mockStore.aStore[:len(repo.mockStore.aStore)-1]
+
+			return nil
+		}
+	}
+
+	return errors.New("ERROR_REMOVE_CONSUMER")
+}
+
 func (repo *StoreMockRepositoryImpl) Get(id string) (*domain.Store, error) {
 	for _, elem := range repo.mockStore.aStore {
 		if elem.ID == id {
@@ -68,6 +83,7 @@ func (repo *StoreMockRepositoryImpl) AddConsumer(id string, consumer *domain.Con
 	for _, elem := range repo.mockStore.aStore {
 		if elem.ID == id {
 			elem.Queue = append(elem.Queue, consumer)
+
 			return nil
 		}
 	}
@@ -84,6 +100,7 @@ func (repo *StoreMockRepositoryImpl) RemoveConsumer(id string, phone string) err
 					copy(elem.Queue[i:], elem.Queue[i+1:])
 					elem.Queue[len(elem.Queue)-1] = nil
 					elem.Queue = elem.Queue[:len(elem.Queue)-1]
+
 					return nil
 				}
 			}
@@ -92,21 +109,6 @@ func (repo *StoreMockRepositoryImpl) RemoveConsumer(id string, phone string) err
 
 	return errors.New("ERROR_REMOVE_CONSUMER")
 }
-
-// func (repo *StoreMockRepositoryImpl) RemoveConsumer(id string, phone string) error {
-
-// 	for i, elem := range repo.mockStore.aStore {
-// 		if elem.ID == id {
-// 			copy(repo.mockStore.aStore[i:], repo.mockStore.aStore[i+1:])
-// 			repo.mockStore.aStore[len(repo.mockStore.aStore)-1] = nil
-// 			repo.mockStore.aStore = repo.mockStore.aStore[:len(repo.mockStore.aStore)-1]
-
-// 			return nil
-// 		}
-// 	}
-
-// 	return errors.New("ERROR_REMOVE_CONSUMER")
-// }
 
 func (repo *StoreMockRepositoryImpl) GetConsumer(id string, phone string) (*domain.Consumer, error) {
 
