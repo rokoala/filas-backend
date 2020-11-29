@@ -33,7 +33,7 @@ func (svc *StoreServiceImpl) Create(URLname, name string) (*domain.Store, error)
 		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_ADD_STORE)
 	}
 
-	lstore, err := svc.storeRepository.GetStore(URLname)
+	lstore, err := svc.storeRepository.GetStore(name)
 	if err != nil {
 		if err.Error() != repository.ERROR_NOT_FOUND {
 			return nil, err
@@ -41,7 +41,7 @@ func (svc *StoreServiceImpl) Create(URLname, name string) (*domain.Store, error)
 	}
 
 	if lstore != nil {
-		return nil, errors.New("Estabelecimento com url name já cadastrado")
+		return nil, errors.New("Estabelecimento com nome já cadastrado")
 	}
 
 	store := domain.Store{
@@ -57,13 +57,13 @@ func (svc *StoreServiceImpl) Create(URLname, name string) (*domain.Store, error)
 	return newStore, nil
 }
 
-func (svc *StoreServiceImpl) GetStore(URLname string) (*domain.Store, error) {
+func (svc *StoreServiceImpl) GetStore(name string) (*domain.Store, error) {
 
-	if URLname == "" {
+	if name == "" {
 		return nil, errors.New("Parametro de url não deve ser vazio")
 	}
 
-	store, err := svc.storeRepository.GetStore(URLname)
+	store, err := svc.storeRepository.GetStore(name)
 	if err != nil {
 		return nil, err
 	}

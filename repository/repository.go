@@ -8,7 +8,7 @@ import (
 type StoreRepository interface {
 	Create(store *domain.Store) (*domain.Store, error)
 	Get(id string) (*domain.Store, error)
-	GetStore(URLname string) (*domain.Store, error)
+	GetStore(name string) (*domain.Store, error)
 	AddConsumer(id string, consumer *domain.Consumer) error
 	RemoveConsumer(id string, phone string) error
 	GetConsumer(id string, phone string) (*domain.Consumer, error)

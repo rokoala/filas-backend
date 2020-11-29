@@ -18,7 +18,7 @@ func (repo *StoreRepositoryImpl) Get(id string) (*domain.Store, error) {
 	return nil, nil
 }
 
-func (repo *StoreRepositoryImpl) GetStore(URLname string) (*domain.Store, error) {
+func (repo *StoreRepositoryImpl) GetStore(name string) (*domain.Store, error) {
 	return nil, nil
 }
 
