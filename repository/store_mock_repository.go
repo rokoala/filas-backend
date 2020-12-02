@@ -11,7 +11,6 @@ import (
 
 const (
 	ERROR_NOT_FOUND          = "Não foi encontrado o estabelecimento"
-	ERROR_REMOVE_CONSUMER    = "Não foi possível remover o consumidor"
 	ERROR_NOT_FOUND_CONSUMER = "Não foi possível encontrar consumidor"
 )
 
@@ -56,7 +55,7 @@ func (repo *StoreMockRepositoryImpl) RemoveStore(id string) error {
 		}
 	}
 
-	return errors.New("ERROR_REMOVE_CONSUMER")
+	return errors.New(ERROR_NOT_FOUND)
 }
 
 func (repo *StoreMockRepositoryImpl) Get(id string) (*domain.Store, error) {
@@ -107,7 +106,7 @@ func (repo *StoreMockRepositoryImpl) RemoveConsumer(id string, phone string) err
 		}
 	}
 
-	return errors.New("ERROR_REMOVE_CONSUMER")
+	return errors.New(ERROR_NOT_FOUND_CONSUMER)
 }
 
 func (repo *StoreMockRepositoryImpl) GetConsumer(id string, phone string) (*domain.Consumer, error) {

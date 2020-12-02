@@ -4,6 +4,8 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/rokoga/filas-backend/repository"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -31,7 +33,7 @@ func TestCreate(t *testing.T) {
 			assert.Equal(t, test.resultName, store.Name)
 			assert.NotEmpty(t, store.ID)
 		} else {
-			assert.IsType(t, test.err, err)
+			assert.Equal(t, test.err, err)
 			assert.Nil(t, store)
 		}
 	}
@@ -56,14 +58,14 @@ func TestRemoveStore(t *testing.T) {
 		err error
 	}{
 		{id: store.ID, err: nil},
-		{id: store.ID, err: errors.New("ERROR_REMOVE_CONSUMER")},
-		{id: "fakeID", err: errors.New("ERROR_REMOVE_CONSUMER")},
+		{id: store.ID, err: errors.New(repository.ERROR_NOT_FOUND)},
+		{id: "fakeID", err: errors.New(repository.ERROR_NOT_FOUND)},
 		{id: "", err: errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE_STORE)},
 	}
 
 	for _, test := range tests {
 		err := svc.RemoveStore(test.id)
-		assert.IsType(t, test.err, err)
+		assert.Equal(t, test.err, err)
 	}
 
 }
@@ -87,8 +89,8 @@ func TestGetStore(t *testing.T) {
 		err        error
 	}{
 		{name: "Outback", resultURL: "outback", resultName: "Outback", err: nil},
-		{name: "Jeronimo", resultURL: "", resultName: "", err: errors.New("Não foi encontrado o estabelecimento")},
-		{name: "", resultURL: "", resultName: "", err: errors.New("Parametro de url não deve ser vazio")},
+		{name: "Jeronimo", resultURL: "", resultName: "", err: errors.New(repository.ERROR_NOT_FOUND)},
+		{name: "", resultURL: "", resultName: "", err: errors.New(ERROR_ARGUMENT_NOT_VALID_GET_STORE)},
 	}
 
 	for _, test := range tests {
@@ -99,7 +101,7 @@ func TestGetStore(t *testing.T) {
 			assert.Equal(t, test.resultName, store.Name)
 			assert.NotEmpty(t, store.ID)
 		} else {
-			assert.IsType(t, test.err, err)
+			assert.Equal(t, test.err, err)
 			assert.Nil(t, store)
 		}
 	}
@@ -126,9 +128,9 @@ func TestAddConsumer(t *testing.T) {
 	}{
 		{id: store.ID, name: "Fulano", phone: "011998989898", err: nil},
 		{id: store.ID, name: "Ciclano", phone: "011922222222", err: nil},
-		{id: store.ID, name: "", phone: "", err: errors.New(ERROR_ARGUMENT_NOT_VALID_ADD)},
-		{id: "", name: "Fulaninho", phone: "011888888888", err: errors.New(ERROR_ARGUMENT_NOT_VALID_ADD)},
-		{id: "FakeID", name: "Fulaninho", phone: "011888888888", err: errors.New("Não foi encontrado o estabelecimento")},
+		{id: store.ID, name: "", phone: "", err: errors.New(ERROR_ARGUMENT_NOT_VALID_ADD_CONSUMER)},
+		{id: "", name: "Fulaninho", phone: "011888888888", err: errors.New(ERROR_ARGUMENT_NOT_VALID_ADD_CONSUMER)},
+		{id: "FakeID", name: "Fulaninho", phone: "011888888888", err: errors.New(repository.ERROR_NOT_FOUND)},
 	}
 
 	for _, test := range tests {
@@ -136,7 +138,7 @@ func TestAddConsumer(t *testing.T) {
 		if err == nil {
 			assert.NotNil(t, accessURL)
 		} else {
-			assert.IsType(t, test.err, err)
+			assert.Equal(t, test.err, err)
 			assert.Empty(t, accessURL)
 		}
 	}
@@ -170,14 +172,14 @@ func TestRemoveConsumer(t *testing.T) {
 		err   error
 	}{
 		{id: store.ID, phone: consumerPhone, err: nil},
-		{id: store.ID, phone: consumerFakePhone, err: errors.New("ERROR_REMOVE_CONSUMER")},
-		{id: "fakeID", phone: consumerPhone, err: errors.New("ERROR_REMOVE_CONSUMER")},
-		{id: "", phone: consumerPhone, err: errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE_STORE)},
+		{id: store.ID, phone: consumerFakePhone, err: errors.New(repository.ERROR_NOT_FOUND_CONSUMER)},
+		{id: "fakeID", phone: consumerPhone, err: errors.New(repository.ERROR_NOT_FOUND_CONSUMER)},
+		{id: "", phone: consumerPhone, err: errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE_CONSUMER)},
 	}
 
 	for _, test := range tests {
 		err := svc.RemoveConsumer(test.id, test.phone)
-		assert.IsType(t, test.err, err)
+		assert.Equal(t, test.err, err)
 	}
 
 }
@@ -209,9 +211,9 @@ func TestGetConsumer(t *testing.T) {
 		err   error
 	}{
 		{id: store.ID, phone: consumerPhone, err: nil},
-		{id: store.ID, phone: consumerFakePhone, err: errors.New("ERROR_NOT_FOUND_CONSUMER")},
-		{id: "fakeID", phone: consumerPhone, err: errors.New("ERROR_NOT_FOUND_CONSUMER")},
-		{id: "", phone: consumerPhone, err: errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE)},
+		{id: store.ID, phone: consumerFakePhone, err: errors.New(repository.ERROR_NOT_FOUND_CONSUMER)},
+		{id: "fakeID", phone: consumerPhone, err: errors.New(repository.ERROR_NOT_FOUND_CONSUMER)},
+		{id: "", phone: consumerPhone, err: errors.New(ERROR_ARGUMENT_NOT_VALID_GET_CONSUMER)},
 	}
 
 	for _, test := range tests {
@@ -222,7 +224,7 @@ func TestGetConsumer(t *testing.T) {
 			assert.NotEmpty(t, consumer.Number)
 			assert.NotEmpty(t, consumer.Accesskey)
 		} else {
-			assert.IsType(t, test.err, err)
+			assert.Equal(t, test.err, err)
 			assert.Nil(t, consumer)
 		}
 	}
@@ -261,9 +263,10 @@ func TestGetAllConsumers(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, result)
 
-	result, err4 := svc.GetAllConsumers("")
+	result, err2 := svc.GetAllConsumers("")
 
-	assert.NotNil(t, err4)
+	assert.NotNil(t, err2)
+	assert.Equal(t, err2, errors.New(ERROR_ARGUMENT_NOT_VALID_GET_CONSUMER))
 	assert.Nil(t, result)
 
 }
