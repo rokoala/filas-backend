@@ -164,13 +164,22 @@ func TestRemoveConsumer(t *testing.T) {
 	assert.Nil(t, err2)
 	assert.NotNil(t, accessConsumerURL)
 
-	err3 := svc.RemoveConsumer(store.ID, consumerPhone)
+	tests := []struct {
+		id    string
+		phone string
+		err   error
+	}{
+		{id: store.ID, phone: consumerPhone, err: nil},
+		{id: store.ID, phone: consumerFakePhone, err: errors.New("ERROR_REMOVE_CONSUMER")},
+		{id: "fakeID", phone: consumerPhone, err: errors.New("ERROR_REMOVE_CONSUMER")},
+		{id: "", phone: consumerPhone, err: errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE_STORE)},
+	}
 
-	assert.Nil(t, err3)
+	for _, test := range tests {
+		err := svc.RemoveConsumer(test.id, test.phone)
+		assert.IsType(t, test.err, err)
+	}
 
-	err4 := svc.RemoveConsumer(store.ID, consumerFakePhone)
-
-	assert.NotNil(t, err4)
 }
 
 func TestGetConsumer(t *testing.T) {
@@ -194,19 +203,29 @@ func TestGetConsumer(t *testing.T) {
 	assert.Nil(t, err2)
 	assert.NotNil(t, accessConsumerURL)
 
-	consumer, err3 := svc.GetConsumer(store.ID, consumerPhone)
+	tests := []struct {
+		id    string
+		phone string
+		err   error
+	}{
+		{id: store.ID, phone: consumerPhone, err: nil},
+		{id: store.ID, phone: consumerFakePhone, err: errors.New("ERROR_NOT_FOUND_CONSUMER")},
+		{id: "fakeID", phone: consumerPhone, err: errors.New("ERROR_NOT_FOUND_CONSUMER")},
+		{id: "", phone: consumerPhone, err: errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE)},
+	}
 
-	assert.Nil(t, err3)
-	assert.NotNil(t, consumer)
-
-	assert.NotEmpty(t, consumer.Name)
-	assert.NotEmpty(t, consumer.Number)
-	assert.NotEmpty(t, consumer.Accesskey)
-
-	consumer, err4 := svc.GetConsumer(store.ID, consumerFakePhone)
-
-	assert.NotNil(t, err4)
-	assert.Nil(t, consumer)
+	for _, test := range tests {
+		consumer, err := svc.GetConsumer(test.id, test.phone)
+		if err == nil {
+			assert.NotNil(t, consumer)
+			assert.NotEmpty(t, consumer.Name)
+			assert.NotEmpty(t, consumer.Number)
+			assert.NotEmpty(t, consumer.Accesskey)
+		} else {
+			assert.IsType(t, test.err, err)
+			assert.Nil(t, consumer)
+		}
+	}
 
 }
 
@@ -222,40 +241,29 @@ func TestGetAllConsumers(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, store)
 
-	c1Name := "Fulano Um"
-	c1Phone := "011998989899"
-	c2Name := "Fulano Dois"
-	c2Phone := "011998989855"
-	c3Name := "Fulano Tres"
-	c3Phone := "011998989877"
+	consumers := []struct {
+		name  string
+		phone string
+	}{
+		{name: "Fulano Um", phone: "011998989899"},
+		{name: "Fulano Dois", phone: "011976767676"},
+		{name: "Fulano Tres", phone: "011954545454"},
+	}
 
-	accessConsumerURL, err := svc.AddConsumer(store.ID, c1Name, c1Phone)
+	for _, c := range consumers {
+		accessConsumerURL, err := svc.AddConsumer(store.ID, c.name, c.phone)
+		assert.Nil(t, err)
+		assert.NotNil(t, accessConsumerURL)
+	}
 
-	assert.Nil(t, err)
-	assert.NotNil(t, accessConsumerURL)
-
-	accessConsumerURL1, err := svc.AddConsumer(store.ID, c2Name, c2Phone)
-
-	assert.Nil(t, err)
-	assert.NotNil(t, accessConsumerURL1)
-
-	accessConsumerURL2, err := svc.AddConsumer(store.ID, c3Name, c3Phone)
+	result, err := svc.GetAllConsumers(store.ID)
 
 	assert.Nil(t, err)
-	assert.NotNil(t, accessConsumerURL2)
+	assert.NotNil(t, result)
 
-	consumers, err := svc.GetAllConsumers(store.ID)
-
-	assert.Nil(t, err)
-	assert.NotNil(t, consumers)
-
-	// assert.NotEmpty(t, consumer.Name)
-	// assert.NotEmpty(t, consumer.Number)
-	// assert.NotEmpty(t, consumer.Accesskey)
-
-	consumer, err4 := svc.GetAllConsumers("")
+	result, err4 := svc.GetAllConsumers("")
 
 	assert.NotNil(t, err4)
-	assert.Nil(t, consumer)
+	assert.Nil(t, result)
 
 }
