@@ -12,9 +12,13 @@ import (
 )
 
 const (
-	ERROR_ARGUMENT_NOT_VALID_ADD_STORE = "Os parametros para inserção do estabelecimento devem ser preenchidas"
-	ERROR_ARGUMENT_NOT_VALID_ADD       = "Os parametros para inserção de consumidor devem ser preenchidas"
-	ERROR_ARGUMENT_NOT_VALID_REMOVE    = "Os parametros para remoção de consumidor devem ser preenchidas"
+	ERROR_ARGUMENT_NOT_VALID_GET_STORE       = "Os parametros para pesquisa do estabelecimento devem ser preenchidos"
+	ERROR_ARGUMENT_NOT_VALID_ADD_STORE       = "Os parametros para inserção do estabelecimento devem ser preenchidos"
+	ERROR_ARGUMENT_NOT_VALID_REMOVE_STORE    = "Os parametros para remoção do estabelecimento devem ser preenchidos"
+	ERROR_ARGUMENT_NOT_VALID_ADD_CONSUMER    = "Os parametros para inserção de consumidor devem ser preenchidos"
+	ERROR_ARGUMENT_NOT_VALID_REMOVE_CONSUMER = "Os parametros para remoção de consumidor devem ser preenchidos"
+	ERROR_ARGUMENT_NOT_VALID_GET_CONSUMER    = "Os parametros para pesquisa de consumidor devem ser preenchidos"
+	ERROR_STORE_EXISTS                       = "Estabelecimento com nome já cadastrado"
 )
 
 type StoreServiceImpl struct {
@@ -33,7 +37,7 @@ func (svc *StoreServiceImpl) Create(URLname, name string) (*domain.Store, error)
 		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_ADD_STORE)
 	}
 
-	lstore, err := svc.storeRepository.GetStore(URLname)
+	lstore, err := svc.storeRepository.GetStore(name)
 	if err != nil {
 		if err.Error() != repository.ERROR_NOT_FOUND {
 			return nil, err
@@ -41,7 +45,7 @@ func (svc *StoreServiceImpl) Create(URLname, name string) (*domain.Store, error)
 	}
 
 	if lstore != nil {
-		return nil, errors.New("Estabelecimento com url name já cadastrado")
+		return nil, errors.New(ERROR_STORE_EXISTS)
 	}
 
 	store := domain.Store{
@@ -57,13 +61,27 @@ func (svc *StoreServiceImpl) Create(URLname, name string) (*domain.Store, error)
 	return newStore, nil
 }
 
-func (svc *StoreServiceImpl) GetStore(URLname string) (*domain.Store, error) {
+func (svc *StoreServiceImpl) RemoveStore(id string) error {
 
-	if URLname == "" {
-		return nil, errors.New("Parametro de url não deve ser vazio")
+	if id == "" {
+		return errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE_STORE)
 	}
 
-	store, err := svc.storeRepository.GetStore(URLname)
+	err := svc.storeRepository.RemoveStore(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc *StoreServiceImpl) GetStore(name string) (*domain.Store, error) {
+
+	if name == "" {
+		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_GET_STORE)
+	}
+
+	store, err := svc.storeRepository.GetStore(name)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +92,7 @@ func (svc *StoreServiceImpl) GetStore(URLname string) (*domain.Store, error) {
 func (svc *StoreServiceImpl) AddConsumer(id, name, number string) (string, error) {
 
 	if id == "" || name == "" || number == "" {
-		return "", errors.New(ERROR_ARGUMENT_NOT_VALID_ADD)
+		return "", errors.New(ERROR_ARGUMENT_NOT_VALID_ADD_CONSUMER)
 	}
 
 	s1 := rand.NewSource(time.Now().UnixNano())
@@ -103,7 +121,7 @@ func (svc *StoreServiceImpl) AddConsumer(id, name, number string) (string, error
 func (svc *StoreServiceImpl) RemoveConsumer(id, phone string) error {
 
 	if id == "" || phone == "" {
-		return errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE)
+		return errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE_CONSUMER)
 	}
 
 	if err := svc.storeRepository.RemoveConsumer(id, phone); err != nil {
@@ -116,7 +134,7 @@ func (svc *StoreServiceImpl) RemoveConsumer(id, phone string) error {
 func (svc *StoreServiceImpl) GetConsumer(id, phone string) (*domain.Consumer, error) {
 
 	if id == "" || phone == "" {
-		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE)
+		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_GET_CONSUMER)
 	}
 
 	consumer, err := svc.storeRepository.GetConsumer(id, phone)
@@ -130,7 +148,7 @@ func (svc *StoreServiceImpl) GetConsumer(id, phone string) (*domain.Consumer, er
 func (svc *StoreServiceImpl) GetAllConsumers(id string) ([]*domain.Consumer, error) {
 
 	if id == "" {
-		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE)
+		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_GET_CONSUMER)
 	}
 
 	consumers, err := svc.storeRepository.GetAllConsumers(id)

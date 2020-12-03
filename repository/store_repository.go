@@ -14,11 +14,15 @@ func (repo *StoreRepositoryImpl) Create(store *domain.Store) (*domain.Store, err
 	return nil, nil
 }
 
+func (repo *StoreRepositoryImpl) RemoveStore(id string) error {
+	return nil
+}
+
 func (repo *StoreRepositoryImpl) Get(id string) (*domain.Store, error) {
 	return nil, nil
 }
 
-func (repo *StoreRepositoryImpl) GetStore(URLname string) (*domain.Store, error) {
+func (repo *StoreRepositoryImpl) GetStore(name string) (*domain.Store, error) {
 	return nil, nil
 }
 
