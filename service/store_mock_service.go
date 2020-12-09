@@ -11,30 +11,20 @@ import (
 	"github.com/rokoga/filas-backend/repository"
 )
 
-const (
-	ERROR_ARGUMENT_NOT_VALID_GET_STORE       = "Os parametros para pesquisa do estabelecimento devem ser preenchidos"
-	ERROR_ARGUMENT_NOT_VALID_ADD_STORE       = "Os parametros para inserção do estabelecimento devem ser preenchidos"
-	ERROR_ARGUMENT_NOT_VALID_REMOVE_STORE    = "Os parametros para remoção do estabelecimento devem ser preenchidos"
-	ERROR_ARGUMENT_NOT_VALID_ADD_CONSUMER    = "Os parametros para inserção de consumidor devem ser preenchidos"
-	ERROR_ARGUMENT_NOT_VALID_REMOVE_CONSUMER = "Os parametros para remoção de consumidor devem ser preenchidos"
-	ERROR_ARGUMENT_NOT_VALID_GET_CONSUMER    = "Os parametros para pesquisa de consumidor devem ser preenchidos"
-	ERROR_STORE_EXISTS                       = "Estabelecimento com nome já cadastrado"
-)
-
-// StoreServiceImpl implements
-type StoreServiceImpl struct {
+// StoreMockServiceImpl implements
+type StoreMockServiceImpl struct {
 	storeRepository repository.StoreRepository
 }
 
-// NewStoreServiceImpl implements
-func NewStoreServiceImpl() StoreService {
-	return &StoreServiceImpl{
-		storeRepository: repository.NewStoreRepository(),
+// NewStoreMockServiceImpl implements
+func NewStoreMockServiceImpl() StoreService {
+	return &StoreMockServiceImpl{
+		storeRepository: repository.NewStoreMockRepository(),
 	}
 }
 
 // Create implements
-func (svc *StoreServiceImpl) Create(URLname, name string) (*domain.Store, error) {
+func (svc *StoreMockServiceImpl) Create(URLname, name string) (*domain.Store, error) {
 
 	if URLname == "" || name == "" {
 		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_ADD_STORE)
@@ -65,7 +55,7 @@ func (svc *StoreServiceImpl) Create(URLname, name string) (*domain.Store, error)
 }
 
 // RemoveStore implements
-func (svc *StoreServiceImpl) RemoveStore(id string) error {
+func (svc *StoreMockServiceImpl) RemoveStore(id string) error {
 
 	if id == "" {
 		return errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE_STORE)
@@ -80,7 +70,7 @@ func (svc *StoreServiceImpl) RemoveStore(id string) error {
 }
 
 // GetStore implements
-func (svc *StoreServiceImpl) GetStore(name string) (*domain.Store, error) {
+func (svc *StoreMockServiceImpl) GetStore(name string) (*domain.Store, error) {
 
 	if name == "" {
 		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_GET_STORE)
@@ -95,7 +85,7 @@ func (svc *StoreServiceImpl) GetStore(name string) (*domain.Store, error) {
 }
 
 // GetStoreByID implements
-func (svc *StoreServiceImpl) GetStoreByID(id string) (*domain.Store, error) {
+func (svc *StoreMockServiceImpl) GetStoreByID(id string) (*domain.Store, error) {
 
 	if id == "" {
 		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_GET_STORE)
@@ -110,7 +100,7 @@ func (svc *StoreServiceImpl) GetStoreByID(id string) (*domain.Store, error) {
 }
 
 // AddConsumer implements
-func (svc *StoreServiceImpl) AddConsumer(id, name, number string) (string, error) {
+func (svc *StoreMockServiceImpl) AddConsumer(id, name, number string) (string, error) {
 
 	if id == "" || name == "" || number == "" {
 		return "", errors.New(ERROR_ARGUMENT_NOT_VALID_ADD_CONSUMER)
@@ -140,7 +130,7 @@ func (svc *StoreServiceImpl) AddConsumer(id, name, number string) (string, error
 }
 
 // RemoveConsumer implements
-func (svc *StoreServiceImpl) RemoveConsumer(id, phone string) error {
+func (svc *StoreMockServiceImpl) RemoveConsumer(id, phone string) error {
 
 	if id == "" || phone == "" {
 		return errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE_CONSUMER)
@@ -154,7 +144,7 @@ func (svc *StoreServiceImpl) RemoveConsumer(id, phone string) error {
 }
 
 // GetConsumer implements
-func (svc *StoreServiceImpl) GetConsumer(id, phone string) (*domain.Consumer, error) {
+func (svc *StoreMockServiceImpl) GetConsumer(id, phone string) (*domain.Consumer, error) {
 
 	if id == "" || phone == "" {
 		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_GET_CONSUMER)
@@ -169,7 +159,7 @@ func (svc *StoreServiceImpl) GetConsumer(id, phone string) (*domain.Consumer, er
 }
 
 // GetAllConsumers implements
-func (svc *StoreServiceImpl) GetAllConsumers(id string) ([]*domain.Consumer, error) {
+func (svc *StoreMockServiceImpl) GetAllConsumers(id string) ([]*domain.Consumer, error) {
 
 	if id == "" {
 		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_GET_CONSUMER)

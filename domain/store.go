@@ -1,12 +1,12 @@
 package domain
 
-// Store - Domínio do estabelecimento
-// O establecimento contém um fila de consumidores em ordem;
+// Store - Store Domain
+// Store contains an ordered consumer queue
 type Store struct {
-	ID      string
-	Name    string
-	URLName string
-	Queue   []*Consumer
+	ID      string      `bson:"_id,omitempty"`
+	Name    string      `bson:"name,omitempty"`
+	URLName string      `bson:"urlname,omitempty"`
+	Queue   []*Consumer `bson:"queue,omitempty"`
 }
 
 // filas.app/outback
