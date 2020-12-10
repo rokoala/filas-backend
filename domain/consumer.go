@@ -1,6 +1,6 @@
 package domain
 
-// Consumidor - Domínio do consumidor
+// Consumer - Consumer domain
 type Consumer struct {
 	Name      string
 	Number    string

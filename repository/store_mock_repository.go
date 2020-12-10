@@ -9,19 +9,17 @@ import (
 	"github.com/rokoga/filas-backend/domain"
 )
 
-const (
-	ERROR_NOT_FOUND          = "Não foi encontrado o estabelecimento"
-	ERROR_NOT_FOUND_CONSUMER = "Não foi possível encontrar consumidor"
-)
-
+// MockStore implements
 type MockStore struct {
 	aStore []*domain.Store
 }
 
+// StoreMockRepositoryImpl implements
 type StoreMockRepositoryImpl struct {
 	mockStore MockStore
 }
 
+// NewStoreMockRepository implements
 func NewStoreMockRepository() StoreRepository {
 	return &StoreMockRepositoryImpl{
 		mockStore: MockStore{
@@ -30,6 +28,7 @@ func NewStoreMockRepository() StoreRepository {
 	}
 }
 
+// Create implements
 func (repo *StoreMockRepositoryImpl) Create(store *domain.Store) (*domain.Store, error) {
 
 	if store.ID == "" {
@@ -43,6 +42,7 @@ func (repo *StoreMockRepositoryImpl) Create(store *domain.Store) (*domain.Store,
 	return store, nil
 }
 
+// RemoveStore implements
 func (repo *StoreMockRepositoryImpl) RemoveStore(id string) error {
 
 	for i, elem := range repo.mockStore.aStore {
@@ -55,18 +55,20 @@ func (repo *StoreMockRepositoryImpl) RemoveStore(id string) error {
 		}
 	}
 
-	return errors.New(ERROR_NOT_FOUND)
+	return errors.New(ErrorNotFoundStore)
 }
 
-func (repo *StoreMockRepositoryImpl) Get(id string) (*domain.Store, error) {
+// GetStoreByID implements
+func (repo *StoreMockRepositoryImpl) GetStoreByID(id string) (*domain.Store, error) {
 	for _, elem := range repo.mockStore.aStore {
 		if elem.ID == id {
 			return elem, nil
 		}
 	}
-	return nil, errors.New(ERROR_NOT_FOUND)
+	return nil, errors.New(ErrorNotFoundStore)
 }
 
+// GetStore implements
 func (repo *StoreMockRepositoryImpl) GetStore(name string) (*domain.Store, error) {
 	for _, elem := range repo.mockStore.aStore {
 		if elem.Name == name {
@@ -74,9 +76,10 @@ func (repo *StoreMockRepositoryImpl) GetStore(name string) (*domain.Store, error
 		}
 	}
 
-	return nil, errors.New(ERROR_NOT_FOUND)
+	return nil, errors.New(ErrorNotFoundStore)
 }
 
+// AddConsumer implements
 func (repo *StoreMockRepositoryImpl) AddConsumer(id string, consumer *domain.Consumer) error {
 
 	for _, elem := range repo.mockStore.aStore {
@@ -87,9 +90,10 @@ func (repo *StoreMockRepositoryImpl) AddConsumer(id string, consumer *domain.Con
 		}
 	}
 
-	return errors.New(ERROR_NOT_FOUND)
+	return errors.New(ErrorNotFoundStore)
 }
 
+// RemoveConsumer implements
 func (repo *StoreMockRepositoryImpl) RemoveConsumer(id string, phone string) error {
 
 	for _, elem := range repo.mockStore.aStore {
@@ -106,9 +110,10 @@ func (repo *StoreMockRepositoryImpl) RemoveConsumer(id string, phone string) err
 		}
 	}
 
-	return errors.New(ERROR_NOT_FOUND_CONSUMER)
+	return errors.New(ErrorNotFoundConsumer)
 }
 
+// GetConsumer implements
 func (repo *StoreMockRepositoryImpl) GetConsumer(id string, phone string) (*domain.Consumer, error) {
 
 	for _, elem := range repo.mockStore.aStore {
@@ -121,9 +126,10 @@ func (repo *StoreMockRepositoryImpl) GetConsumer(id string, phone string) (*doma
 		}
 	}
 
-	return nil, errors.New(ERROR_NOT_FOUND_CONSUMER)
+	return nil, errors.New(ErrorNotFoundConsumer)
 }
 
+// GetAllConsumers implements
 func (repo *StoreMockRepositoryImpl) GetAllConsumers(id string) ([]*domain.Consumer, error) {
 
 	for _, elem := range repo.mockStore.aStore {
@@ -132,5 +138,5 @@ func (repo *StoreMockRepositoryImpl) GetAllConsumers(id string) ([]*domain.Consu
 		}
 	}
 
-	return nil, errors.New(ERROR_NOT_FOUND)
+	return nil, errors.New(ErrorNotFoundStore)
 }

@@ -1,43 +1,242 @@
 package repository
 
-import "github.com/rokoga/filas-backend/domain"
+import (
+	"context"
+	"errors"
+	"fmt"
+	"log"
+	"time"
 
+	"github.com/rokoga/filas-backend/domain"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+const (
+	// ErrorNotFoundStore for store not found
+	ErrorNotFoundStore = "Não foi encontrado o estabelecimento"
+	// ErrorNotFoundConsumer for consumer not found
+	ErrorNotFoundConsumer = "Não foi possível encontrar consumidor"
+	// ErrorParserID for error parsing ID string
+	ErrorParserID = "Erro ao fazer parser do ID"
+)
+
+// StoreRepositoryImpl implements
 type StoreRepositoryImpl struct {
-	// Conn mongo
+	client     *mongo.Client
+	collection *mongo.Collection
 }
 
+// NewStoreRepository implements
 func NewStoreRepository() StoreRepository {
-	return &StoreRepositoryImpl{}
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://mongo:27017"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	err = client.Connect(ctx)
+	if err != nil {
+		fmt.Printf("ERRO %v \n", err)
+		log.Fatal(err)
+	}
+	// defer client.Disconnect(ctx)
+
+	collection := client.Database("app").Collection("stores")
+
+	fmt.Printf("collection %v \n", collection)
+
+	return &StoreRepositoryImpl{
+		client:     client,
+		collection: collection,
+	}
 }
 
+// Create implements
 func (repo *StoreRepositoryImpl) Create(store *domain.Store) (*domain.Store, error) {
-	return nil, nil
+
+	// fmt.Printf("store %v \n", store)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := repo.collection.InsertOne(ctx, store)
+	if err != nil {
+		return nil, err
+	}
+
+	strID := result.InsertedID.(primitive.ObjectID).Hex()
+
+	storeCreated, err := repo.GetStoreByID(strID)
+	if err != nil {
+		return nil, errors.New(ErrorNotFoundStore)
+	}
+
+	// fmt.Printf("storeCreated GetStore %v \n", storeCreated)
+
+	return storeCreated, nil
 }
 
+// RemoveStore implements
 func (repo *StoreRepositoryImpl) RemoveStore(id string) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return errors.New(ErrorParserID)
+	}
+
+	filter := bson.D{{Key: "_id", Value: oid}}
+
+	result, err := repo.collection.DeleteOne(ctx, filter)
+	if err != nil || result.DeletedCount == 0 {
+		return errors.New(ErrorNotFoundStore)
+	}
+
 	return nil
 }
 
-func (repo *StoreRepositoryImpl) Get(id string) (*domain.Store, error) {
-	return nil, nil
+// GetStoreByID implements
+func (repo *StoreRepositoryImpl) GetStoreByID(id string) (*domain.Store, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var storeGotID domain.Store
+
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, errors.New(ErrorParserID)
+	}
+
+	filter := bson.D{{Key: "_id", Value: oid}}
+
+	err = repo.collection.FindOne(ctx, filter).Decode(&storeGotID)
+	if err != nil {
+		return nil, errors.New(ErrorNotFoundStore)
+	}
+
+	return &storeGotID, nil
 }
 
+// GetStore implements
 func (repo *StoreRepositoryImpl) GetStore(name string) (*domain.Store, error) {
-	return nil, nil
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var storeGotName domain.Store
+
+	// fmt.Printf("Name %v \n", name)
+
+	filter := bson.D{{Key: "name", Value: name}}
+
+	err := repo.collection.FindOne(ctx, filter).Decode(&storeGotName)
+	if err != nil {
+		return nil, errors.New(ErrorNotFoundStore)
+	}
+
+	// fmt.Printf("storeGotName GetStore %v \n", storeGotName)
+
+	return &storeGotName, nil
 }
 
+// AddConsumer implements
 func (repo *StoreRepositoryImpl) AddConsumer(id string, consumer *domain.Consumer) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	store, err := repo.GetStoreByID(id)
+	if err != nil {
+		return errors.New(ErrorNotFoundStore)
+	}
+
+	store.Queue = append(store.Queue, consumer)
+
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return errors.New(ErrorParserID)
+	}
+
+	filter := bson.D{{Key: "_id", Value: oid}}
+	update := bson.D{
+		{Key: "$set", Value: bson.D{{Key: "queue", Value: store.Queue}}},
+	}
+
+	_, err = repo.collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
+// RemoveConsumer implements
 func (repo *StoreRepositoryImpl) RemoveConsumer(id string, phone string) error {
-	return nil
+	store, err := repo.GetStoreByID(id)
+	if err != nil {
+		return errors.New(ErrorNotFoundStore)
+	}
+
+	for i, consumer := range store.Queue {
+		if consumer.Number == phone {
+			copy(store.Queue[i:], store.Queue[i+1:])
+			store.Queue[len(store.Queue)-1] = nil
+			store.Queue = store.Queue[:len(store.Queue)-1]
+
+			oid, err := primitive.ObjectIDFromHex(id)
+			if err != nil {
+				return errors.New(ErrorParserID)
+			}
+
+			filter := bson.D{{Key: "_id", Value: oid}}
+			update := bson.D{
+				{Key: "$set", Value: bson.D{{Key: "queue", Value: store.Queue}}},
+			}
+
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			_, err = repo.collection.UpdateOne(ctx, filter, update)
+			if err != nil {
+				return err
+			}
+
+			return nil
+		}
+	}
+
+	return errors.New(ErrorNotFoundConsumer)
 }
 
+// GetConsumer implements
 func (repo *StoreRepositoryImpl) GetConsumer(id string, phone string) (*domain.Consumer, error) {
-	return nil, nil
+
+	store, err := repo.GetStoreByID(id)
+	if err != nil {
+		return nil, errors.New(ErrorNotFoundStore)
+	}
+
+	for _, consumer := range store.Queue {
+		if consumer.Number == phone {
+			return consumer, nil
+		}
+	}
+
+	return nil, errors.New(ErrorNotFoundConsumer)
 }
 
+// GetAllConsumers implements
 func (repo *StoreRepositoryImpl) GetAllConsumers(id string) ([]*domain.Consumer, error) {
-	return nil, nil
+
+	store, err := repo.GetStoreByID(id)
+	if err != nil {
+		return nil, errors.New(ErrorNotFoundStore)
+	}
+
+	return store.Queue, nil
 }

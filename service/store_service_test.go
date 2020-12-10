@@ -11,7 +11,7 @@ import (
 
 func TestCreate(t *testing.T) {
 
-	svc := NewStoreServiceImpl()
+	svc := NewStoreMockServiceImpl()
 
 	tests := []struct {
 		urlName    string
@@ -43,7 +43,7 @@ func TestCreate(t *testing.T) {
 
 func TestRemoveStore(t *testing.T) {
 
-	svc := NewStoreServiceImpl()
+	svc := NewStoreMockServiceImpl()
 
 	URLname := "outback"
 	name := "Outback"
@@ -58,8 +58,8 @@ func TestRemoveStore(t *testing.T) {
 		err error
 	}{
 		{id: store.ID, err: nil},
-		{id: store.ID, err: errors.New(repository.ERROR_NOT_FOUND)},
-		{id: "fakeID", err: errors.New(repository.ERROR_NOT_FOUND)},
+		{id: store.ID, err: errors.New(repository.ErrorNotFoundStore)},
+		{id: "fakeID", err: errors.New(repository.ErrorNotFoundStore)},
 		{id: "", err: errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE_STORE)},
 	}
 
@@ -72,7 +72,7 @@ func TestRemoveStore(t *testing.T) {
 
 func TestGetStore(t *testing.T) {
 
-	svc := NewStoreServiceImpl()
+	svc := NewStoreMockServiceImpl()
 
 	URLname := "outback"
 	name := "Outback"
@@ -89,7 +89,7 @@ func TestGetStore(t *testing.T) {
 		err        error
 	}{
 		{name: "Outback", resultURL: "outback", resultName: "Outback", err: nil},
-		{name: "Jeronimo", resultURL: "", resultName: "", err: errors.New(repository.ERROR_NOT_FOUND)},
+		{name: "Jeronimo", resultURL: "", resultName: "", err: errors.New(repository.ErrorNotFoundStore)},
 		{name: "", resultURL: "", resultName: "", err: errors.New(ERROR_ARGUMENT_NOT_VALID_GET_STORE)},
 	}
 
@@ -110,7 +110,7 @@ func TestGetStore(t *testing.T) {
 
 func TestAddConsumer(t *testing.T) {
 
-	svc := NewStoreServiceImpl()
+	svc := NewStoreMockServiceImpl()
 
 	URLname := "outback"
 	name := "Outback"
@@ -130,7 +130,7 @@ func TestAddConsumer(t *testing.T) {
 		{id: store.ID, name: "Ciclano", phone: "011922222222", err: nil},
 		{id: store.ID, name: "", phone: "", err: errors.New(ERROR_ARGUMENT_NOT_VALID_ADD_CONSUMER)},
 		{id: "", name: "Fulaninho", phone: "011888888888", err: errors.New(ERROR_ARGUMENT_NOT_VALID_ADD_CONSUMER)},
-		{id: "FakeID", name: "Fulaninho", phone: "011888888888", err: errors.New(repository.ERROR_NOT_FOUND)},
+		{id: "FakeID", name: "Fulaninho", phone: "011888888888", err: errors.New(repository.ErrorNotFoundStore)},
 	}
 
 	for _, test := range tests {
@@ -147,7 +147,7 @@ func TestAddConsumer(t *testing.T) {
 
 func TestRemoveConsumer(t *testing.T) {
 
-	svc := NewStoreServiceImpl()
+	svc := NewStoreMockServiceImpl()
 
 	URLname := "outback"
 	name := "Outback"
@@ -172,8 +172,8 @@ func TestRemoveConsumer(t *testing.T) {
 		err   error
 	}{
 		{id: store.ID, phone: consumerPhone, err: nil},
-		{id: store.ID, phone: consumerFakePhone, err: errors.New(repository.ERROR_NOT_FOUND_CONSUMER)},
-		{id: "fakeID", phone: consumerPhone, err: errors.New(repository.ERROR_NOT_FOUND_CONSUMER)},
+		{id: store.ID, phone: consumerFakePhone, err: errors.New(repository.ErrorNotFoundConsumer)},
+		{id: "fakeID", phone: consumerPhone, err: errors.New(repository.ErrorNotFoundConsumer)},
 		{id: "", phone: consumerPhone, err: errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE_CONSUMER)},
 	}
 
@@ -186,7 +186,7 @@ func TestRemoveConsumer(t *testing.T) {
 
 func TestGetConsumer(t *testing.T) {
 
-	svc := NewStoreServiceImpl()
+	svc := NewStoreMockServiceImpl()
 
 	URLname := "outback"
 	name := "Outback"
@@ -211,8 +211,8 @@ func TestGetConsumer(t *testing.T) {
 		err   error
 	}{
 		{id: store.ID, phone: consumerPhone, err: nil},
-		{id: store.ID, phone: consumerFakePhone, err: errors.New(repository.ERROR_NOT_FOUND_CONSUMER)},
-		{id: "fakeID", phone: consumerPhone, err: errors.New(repository.ERROR_NOT_FOUND_CONSUMER)},
+		{id: store.ID, phone: consumerFakePhone, err: errors.New(repository.ErrorNotFoundConsumer)},
+		{id: "fakeID", phone: consumerPhone, err: errors.New(repository.ErrorNotFoundConsumer)},
 		{id: "", phone: consumerPhone, err: errors.New(ERROR_ARGUMENT_NOT_VALID_GET_CONSUMER)},
 	}
 
@@ -233,7 +233,7 @@ func TestGetConsumer(t *testing.T) {
 
 func TestGetAllConsumers(t *testing.T) {
 
-	svc := NewStoreServiceImpl()
+	svc := NewStoreMockServiceImpl()
 
 	URLname := "outback"
 	name := "Outback"
