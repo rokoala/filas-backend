@@ -17,10 +17,15 @@ func GetConnection(configFile string) (*mongo.Client, *mongo.Collection, error) 
 		return nil, nil, fmt.Errorf("Erro ao ler o arquivo de configuração: %v", err)
 	}
 
-	port := cfg.GetInt("port")
+	port := cfg.GetString("dbport")
 	dbhost := cfg.GetString("dbhost")
-	uri := fmt.Sprintf("mongodb://%s:%d", dbhost, port)
-	// fmt.Printf("mongodb://%s:%d\n", dbhost, port)
+	dbdriver := cfg.GetString("dbdriver")
+	dbuser := cfg.GetString("dbuser")
+	dbpass := cfg.GetString("dbpass")
+	uri := fmt.Sprintf("%s://%s:%s", dbdriver, dbhost, port)
+	if port == "" {
+		uri = fmt.Sprintf("%s://%s:%s@%s", dbdriver, dbuser, dbpass, dbhost)
+	}
 
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
