@@ -22,7 +22,7 @@ func TestCreate(t *testing.T) {
 	}{
 		{urlName: "outback", name: "Outback", resultURL: "outback", resultName: "Outback", err: nil},
 		{urlName: "jeronimo", name: "Jeronimo", resultURL: "jeronimo", resultName: "Jeronimo", err: nil},
-		{urlName: "", name: "", resultURL: "", resultName: "", err: errors.New(ERROR_ARGUMENT_NOT_VALID_ADD_STORE)},
+		{urlName: "", name: "", resultURL: "", resultName: "", err: errors.New(ErrorArgumentNotValidAddStore)},
 	}
 
 	for _, test := range tests {
@@ -60,7 +60,7 @@ func TestRemoveStore(t *testing.T) {
 		{id: store.ID, err: nil},
 		{id: store.ID, err: errors.New(repository.ErrorNotFoundStore)},
 		{id: "fakeID", err: errors.New(repository.ErrorNotFoundStore)},
-		{id: "", err: errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE_STORE)},
+		{id: "", err: errors.New(ErrorArgumentNotValidRemoveStore)},
 	}
 
 	for _, test := range tests {
@@ -90,7 +90,7 @@ func TestGetStore(t *testing.T) {
 	}{
 		{name: "Outback", resultURL: "outback", resultName: "Outback", err: nil},
 		{name: "Jeronimo", resultURL: "", resultName: "", err: errors.New(repository.ErrorNotFoundStore)},
-		{name: "", resultURL: "", resultName: "", err: errors.New(ERROR_ARGUMENT_NOT_VALID_GET_STORE)},
+		{name: "", resultURL: "", resultName: "", err: errors.New(ErrorArgumentNotValidGetStore)},
 	}
 
 	for _, test := range tests {
@@ -128,8 +128,8 @@ func TestAddConsumer(t *testing.T) {
 	}{
 		{id: store.ID, name: "Fulano", phone: "011998989898", err: nil},
 		{id: store.ID, name: "Ciclano", phone: "011922222222", err: nil},
-		{id: store.ID, name: "", phone: "", err: errors.New(ERROR_ARGUMENT_NOT_VALID_ADD_CONSUMER)},
-		{id: "", name: "Fulaninho", phone: "011888888888", err: errors.New(ERROR_ARGUMENT_NOT_VALID_ADD_CONSUMER)},
+		{id: store.ID, name: "", phone: "", err: errors.New(ErrorArgumentNotValidAddConsumer)},
+		{id: "", name: "Fulaninho", phone: "011888888888", err: errors.New(ErrorArgumentNotValidAddConsumer)},
 		{id: "FakeID", name: "Fulaninho", phone: "011888888888", err: errors.New(repository.ErrorNotFoundStore)},
 	}
 
@@ -174,7 +174,7 @@ func TestRemoveConsumer(t *testing.T) {
 		{id: store.ID, phone: consumerPhone, err: nil},
 		{id: store.ID, phone: consumerFakePhone, err: errors.New(repository.ErrorNotFoundConsumer)},
 		{id: "fakeID", phone: consumerPhone, err: errors.New(repository.ErrorNotFoundConsumer)},
-		{id: "", phone: consumerPhone, err: errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE_CONSUMER)},
+		{id: "", phone: consumerPhone, err: errors.New(ErrorArgumentNotValidRemoveConsumer)},
 	}
 
 	for _, test := range tests {
@@ -213,7 +213,7 @@ func TestGetConsumer(t *testing.T) {
 		{id: store.ID, phone: consumerPhone, err: nil},
 		{id: store.ID, phone: consumerFakePhone, err: errors.New(repository.ErrorNotFoundConsumer)},
 		{id: "fakeID", phone: consumerPhone, err: errors.New(repository.ErrorNotFoundConsumer)},
-		{id: "", phone: consumerPhone, err: errors.New(ERROR_ARGUMENT_NOT_VALID_GET_CONSUMER)},
+		{id: "", phone: consumerPhone, err: errors.New(ErrorArgumentNotValidGetConsumer)},
 	}
 
 	for _, test := range tests {
@@ -266,7 +266,7 @@ func TestGetAllConsumers(t *testing.T) {
 	result, err2 := svc.GetAllConsumers("")
 
 	assert.NotNil(t, err2)
-	assert.Equal(t, err2, errors.New(ERROR_ARGUMENT_NOT_VALID_GET_CONSUMER))
+	assert.Equal(t, err2, errors.New(ErrorArgumentNotValidGetConsumer))
 	assert.Nil(t, result)
 
 }

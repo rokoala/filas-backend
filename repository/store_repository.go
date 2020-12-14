@@ -3,15 +3,12 @@ package repository
 import (
 	"context"
 	"errors"
-	"fmt"
-	"log"
 	"time"
 
 	"github.com/rokoga/filas-backend/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const (
@@ -25,32 +22,13 @@ const (
 
 // StoreRepositoryImpl implements
 type StoreRepositoryImpl struct {
-	client     *mongo.Client
 	collection *mongo.Collection
 }
 
 // NewStoreRepository implements
-func NewStoreRepository() StoreRepository {
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://mongo:27017"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	err = client.Connect(ctx)
-	if err != nil {
-		fmt.Printf("ERRO %v \n", err)
-		log.Fatal(err)
-	}
-	// defer client.Disconnect(ctx)
-
-	collection := client.Database("app").Collection("stores")
-
-	fmt.Printf("collection %v \n", collection)
-
+func NewStoreRepository(db *mongo.Collection) StoreRepository {
 	return &StoreRepositoryImpl{
-		client:     client,
-		collection: collection,
+		collection: db,
 	}
 }
 
