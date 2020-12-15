@@ -27,7 +27,7 @@ func NewStoreMockServiceImpl() StoreService {
 func (svc *StoreMockServiceImpl) Create(URLname, name string) (*domain.Store, error) {
 
 	if URLname == "" || name == "" {
-		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_ADD_STORE)
+		return nil, errors.New(ErrorArgumentNotValidAddStore)
 	}
 
 	lstore, err := svc.storeRepository.GetStore(name)
@@ -38,7 +38,7 @@ func (svc *StoreMockServiceImpl) Create(URLname, name string) (*domain.Store, er
 	}
 
 	if lstore != nil {
-		return nil, errors.New(ERROR_STORE_EXISTS)
+		return nil, errors.New(ErrorStoreExists)
 	}
 
 	store := domain.Store{
@@ -58,7 +58,7 @@ func (svc *StoreMockServiceImpl) Create(URLname, name string) (*domain.Store, er
 func (svc *StoreMockServiceImpl) RemoveStore(id string) error {
 
 	if id == "" {
-		return errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE_STORE)
+		return errors.New(ErrorArgumentNotValidRemoveStore)
 	}
 
 	err := svc.storeRepository.RemoveStore(id)
@@ -73,7 +73,7 @@ func (svc *StoreMockServiceImpl) RemoveStore(id string) error {
 func (svc *StoreMockServiceImpl) GetStore(name string) (*domain.Store, error) {
 
 	if name == "" {
-		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_GET_STORE)
+		return nil, errors.New(ErrorArgumentNotValidGetStore)
 	}
 
 	store, err := svc.storeRepository.GetStore(name)
@@ -88,7 +88,7 @@ func (svc *StoreMockServiceImpl) GetStore(name string) (*domain.Store, error) {
 func (svc *StoreMockServiceImpl) GetStoreByID(id string) (*domain.Store, error) {
 
 	if id == "" {
-		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_GET_STORE)
+		return nil, errors.New(ErrorArgumentNotValidGetStore)
 	}
 
 	store, err := svc.storeRepository.GetStoreByID(id)
@@ -103,7 +103,7 @@ func (svc *StoreMockServiceImpl) GetStoreByID(id string) (*domain.Store, error) 
 func (svc *StoreMockServiceImpl) AddConsumer(id, name, number string) (string, error) {
 
 	if id == "" || name == "" || number == "" {
-		return "", errors.New(ERROR_ARGUMENT_NOT_VALID_ADD_CONSUMER)
+		return "", errors.New(ErrorArgumentNotValidAddConsumer)
 	}
 
 	s1 := rand.NewSource(time.Now().UnixNano())
@@ -133,7 +133,7 @@ func (svc *StoreMockServiceImpl) AddConsumer(id, name, number string) (string, e
 func (svc *StoreMockServiceImpl) RemoveConsumer(id, phone string) error {
 
 	if id == "" || phone == "" {
-		return errors.New(ERROR_ARGUMENT_NOT_VALID_REMOVE_CONSUMER)
+		return errors.New(ErrorArgumentNotValidRemoveConsumer)
 	}
 
 	if err := svc.storeRepository.RemoveConsumer(id, phone); err != nil {
@@ -147,7 +147,7 @@ func (svc *StoreMockServiceImpl) RemoveConsumer(id, phone string) error {
 func (svc *StoreMockServiceImpl) GetConsumer(id, phone string) (*domain.Consumer, error) {
 
 	if id == "" || phone == "" {
-		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_GET_CONSUMER)
+		return nil, errors.New(ErrorArgumentNotValidGetConsumer)
 	}
 
 	consumer, err := svc.storeRepository.GetConsumer(id, phone)
@@ -162,7 +162,7 @@ func (svc *StoreMockServiceImpl) GetConsumer(id, phone string) (*domain.Consumer
 func (svc *StoreMockServiceImpl) GetAllConsumers(id string) ([]*domain.Consumer, error) {
 
 	if id == "" {
-		return nil, errors.New(ERROR_ARGUMENT_NOT_VALID_GET_CONSUMER)
+		return nil, errors.New(ErrorArgumentNotValidGetConsumer)
 	}
 
 	consumers, err := svc.storeRepository.GetAllConsumers(id)

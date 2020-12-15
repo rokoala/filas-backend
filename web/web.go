@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rokoga/filas-backend/infra"
 	"github.com/rokoga/filas-backend/service"
 	"github.com/rokoga/filas-backend/vo"
 )
@@ -13,7 +14,13 @@ func Run(done chan string) {
 	const PORT = ":8080"
 	router := gin.Default()
 
-	svc := service.NewStoreServiceImpl()
+	dbClient, dbCollection, err := infra.GetConnection("config/dev/.env")
+	if err != nil {
+		panic(err)
+	}
+	defer infra.CloseConnection(dbClient)
+
+	svc := service.NewStoreServiceImpl(dbCollection)
 
 	router.PUT("/store", func(c *gin.Context) {
 		createRequest := vo.CreateRequest{}
