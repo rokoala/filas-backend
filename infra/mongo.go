@@ -20,12 +20,11 @@ func GetConnection(configFile string) (*mongo.Client, *mongo.Collection, error) 
 	port := cfg.GetString("dbport")
 	dbhost := cfg.GetString("dbhost")
 	dbdriver := cfg.GetString("dbdriver")
-	dbuser := cfg.GetString("dbuser")
-	dbpass := cfg.GetString("dbpass")
+	// dbuser := cfg.GetString("dbuser")
+	// dbpass := cfg.GetString("dbpass")
+	database := cfg.GetString("dbname")
+	dbcollection := cfg.GetString("dbcollection")
 	uri := fmt.Sprintf("%s://%s:%s", dbdriver, dbhost, port)
-	if port == "" {
-		uri = fmt.Sprintf("%s://%s:%s@%s", dbdriver, dbuser, dbpass, dbhost)
-	}
 
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
@@ -39,7 +38,7 @@ func GetConnection(configFile string) (*mongo.Client, *mongo.Collection, error) 
 		return nil, nil, fmt.Errorf("Erro ao criar conexão com o banco: %v", err)
 	}
 
-	collection := client.Database("app").Collection("stores")
+	collection := client.Database(database).Collection(dbcollection)
 
 	return client, collection, nil
 }
