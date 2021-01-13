@@ -16,6 +16,8 @@ const (
 	ErrorNotFoundStore = "Não foi encontrado o estabelecimento"
 	// ErrorNotFoundConsumer for consumer not found
 	ErrorNotFoundConsumer = "Não foi possível encontrar consumidor"
+	// ErrorConsumerExists for consumer already exists
+	ErrorConsumerExists = "Consumidor já cadastrado na fila"
 	// ErrorParserID for error parsing ID string
 	ErrorParserID = "Erro ao fazer parser do ID"
 )
@@ -132,6 +134,12 @@ func (repo *StoreRepositoryImpl) AddConsumer(id string, consumer *domain.Consume
 	store, err := repo.GetStoreByID(id)
 	if err != nil {
 		return errors.New(ErrorNotFoundStore)
+	}
+
+	for _, value := range store.Queue {
+		if value.Number == consumer.Number {
+			return errors.New(ErrorConsumerExists)
+		}
 	}
 
 	store.Queue = append(store.Queue, consumer)
