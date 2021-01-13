@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/rokoga/filas-backend/domain"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,7 @@ import (
 func Run(done chan string) {
 	const PORT = ":8080"
 	router := gin.Default()
+	router.Use(cors.Default())
 
 	dbClient, dbCollection, err := infra.GetConnection("config/dev/.env")
 	if err != nil {
