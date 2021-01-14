@@ -6,9 +6,3 @@ type Consumer struct {
 	Number    string
 	Accesskey string
 }
-
-// ConsumerResponse - ConsumerResponse domain
-type ConsumerResponse struct {
-	Name   string
-	Number string
-}

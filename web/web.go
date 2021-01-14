@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gin-contrib/cors"
-	"github.com/rokoga/filas-backend/domain"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rokoga/filas-backend/infra"
@@ -132,18 +131,7 @@ func Run(done chan string) {
 			return
 		}
 
-		var response []*domain.ConsumerResponse
-
-		for _, value := range allConsumers {
-			item := domain.ConsumerResponse{
-				Name:   value.Name,
-				Number: value.Number,
-			}
-
-			response = append(response, &item)
-		}
-
-		c.JSON(200, response)
+		c.JSON(200, allConsumers)
 	})
 
 	fmt.Printf("Server is listening at %s", PORT)
