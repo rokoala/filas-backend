@@ -137,7 +137,7 @@ func (repo *StoreRepositoryImpl) AddConsumer(id string, consumer *domain.Consume
 	}
 
 	for _, value := range store.Queue {
-		if value.Number == consumer.Number {
+		if value.Phone == consumer.Phone {
 			return errors.New(ErrorConsumerExists)
 		}
 	}
@@ -170,7 +170,7 @@ func (repo *StoreRepositoryImpl) RemoveConsumer(id string, phone string) error {
 	}
 
 	for i, consumer := range store.Queue {
-		if consumer.Number == phone {
+		if consumer.Phone == phone {
 			copy(store.Queue[i:], store.Queue[i+1:])
 			store.Queue[len(store.Queue)-1] = nil
 			store.Queue = store.Queue[:len(store.Queue)-1]
@@ -208,7 +208,7 @@ func (repo *StoreRepositoryImpl) GetConsumer(id string, phone string) (*domain.C
 	}
 
 	for _, consumer := range store.Queue {
-		if consumer.Number == phone {
+		if consumer.Phone == phone {
 			return consumer, nil
 		}
 	}

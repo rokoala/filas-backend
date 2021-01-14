@@ -99,7 +99,7 @@ func (repo *StoreMockRepositoryImpl) RemoveConsumer(id string, phone string) err
 	for _, elem := range repo.mockStore.aStore {
 		if elem.ID == id {
 			for i, cons := range elem.Queue {
-				if cons.Number == phone {
+				if cons.Phone == phone {
 					copy(elem.Queue[i:], elem.Queue[i+1:])
 					elem.Queue[len(elem.Queue)-1] = nil
 					elem.Queue = elem.Queue[:len(elem.Queue)-1]
@@ -119,7 +119,7 @@ func (repo *StoreMockRepositoryImpl) GetConsumer(id string, phone string) (*doma
 	for _, elem := range repo.mockStore.aStore {
 		if elem.ID == id {
 			for _, consumer := range elem.Queue {
-				if consumer.Number == phone {
+				if consumer.Phone == phone {
 					return consumer, nil
 				}
 			}
