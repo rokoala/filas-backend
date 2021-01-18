@@ -221,7 +221,7 @@ func TestGetConsumer(t *testing.T) {
 		if err == nil {
 			assert.NotNil(t, consumer)
 			assert.NotEmpty(t, consumer.Name)
-			assert.NotEmpty(t, consumer.Number)
+			assert.NotEmpty(t, consumer.Phone)
 			assert.NotEmpty(t, consumer.Accesskey)
 		} else {
 			assert.Equal(t, test.err, err)

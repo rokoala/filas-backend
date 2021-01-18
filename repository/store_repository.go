@@ -16,6 +16,8 @@ const (
 	ErrorNotFoundStore = "Não foi encontrado o estabelecimento"
 	// ErrorNotFoundConsumer for consumer not found
 	ErrorNotFoundConsumer = "Não foi possível encontrar consumidor"
+	// ErrorConsumerExists for consumer already exists
+	ErrorConsumerExists = "Consumidor já cadastrado na fila"
 	// ErrorParserID for error parsing ID string
 	ErrorParserID = "Erro ao fazer parser do ID"
 )
@@ -134,6 +136,12 @@ func (repo *StoreRepositoryImpl) AddConsumer(id string, consumer *domain.Consume
 		return errors.New(ErrorNotFoundStore)
 	}
 
+	for _, value := range store.Queue {
+		if value.Phone == consumer.Phone {
+			return errors.New(ErrorConsumerExists)
+		}
+	}
+
 	store.Queue = append(store.Queue, consumer)
 
 	oid, err := primitive.ObjectIDFromHex(id)
@@ -162,7 +170,7 @@ func (repo *StoreRepositoryImpl) RemoveConsumer(id string, phone string) error {
 	}
 
 	for i, consumer := range store.Queue {
-		if consumer.Number == phone {
+		if consumer.Phone == phone {
 			copy(store.Queue[i:], store.Queue[i+1:])
 			store.Queue[len(store.Queue)-1] = nil
 			store.Queue = store.Queue[:len(store.Queue)-1]
@@ -200,7 +208,7 @@ func (repo *StoreRepositoryImpl) GetConsumer(id string, phone string) (*domain.C
 	}
 
 	for _, consumer := range store.Queue {
-		if consumer.Number == phone {
+		if consumer.Phone == phone {
 			return consumer, nil
 		}
 	}

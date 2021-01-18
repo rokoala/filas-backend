@@ -100,9 +100,9 @@ func (svc *StoreMockServiceImpl) GetStoreByID(id string) (*domain.Store, error) 
 }
 
 // AddConsumer implements
-func (svc *StoreMockServiceImpl) AddConsumer(id, name, number string) (string, error) {
+func (svc *StoreMockServiceImpl) AddConsumer(id, name, phone string) (string, error) {
 
-	if id == "" || name == "" || number == "" {
+	if id == "" || name == "" || phone == "" {
 		return "", errors.New(ErrorArgumentNotValidAddConsumer)
 	}
 
@@ -111,7 +111,7 @@ func (svc *StoreMockServiceImpl) AddConsumer(id, name, number string) (string, e
 
 	consumer := domain.Consumer{
 		Name:      name,
-		Number:    number,
+		Phone:     phone,
 		Accesskey: strconv.Itoa(r1.Int()),
 	}
 

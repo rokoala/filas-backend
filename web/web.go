@@ -2,6 +2,9 @@ package web
 
 import (
 	"fmt"
+	"net/http"
+
+	"github.com/gin-contrib/cors"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rokoga/filas-backend/infra"
@@ -13,6 +16,7 @@ import (
 func Run(done chan string) {
 	const PORT = ":8080"
 	router := gin.Default()
+	router.Use(cors.Default())
 
 	dbClient, dbCollection, err := infra.GetConnection("config/dev/.env")
 	if err != nil {
@@ -29,6 +33,8 @@ func Run(done chan string) {
 		store, err := svc.Create(createRequest.URLName, createRequest.Name)
 		if err != nil {
 			c.Error(err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
 
 		c.JSON(200, store)
@@ -40,6 +46,8 @@ func Run(done chan string) {
 		err := svc.RemoveStore(id)
 		if err != nil {
 			c.Error(err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
 
 		c.JSON(200, nil)
@@ -51,6 +59,8 @@ func Run(done chan string) {
 		domainStore, err := svc.GetStore(name)
 		if err != nil {
 			c.Error(err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
 
 		c.JSON(200, domainStore)
@@ -62,6 +72,8 @@ func Run(done chan string) {
 		domainStore, err := svc.GetStoreByID(id)
 		if err != nil {
 			c.Error(err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
 
 		c.JSON(200, domainStore)
@@ -74,6 +86,8 @@ func Run(done chan string) {
 		accessURL, err := svc.AddConsumer(addConsumerRequest.StoreID, addConsumerRequest.Name, addConsumerRequest.Phone)
 		if err != nil {
 			c.Error(err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
 
 		c.JSON(200, accessURL)
@@ -86,6 +100,8 @@ func Run(done chan string) {
 		err := svc.RemoveConsumer(storeid, number)
 		if err != nil {
 			c.Error(err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
 
 		c.JSON(200, nil)
@@ -98,6 +114,8 @@ func Run(done chan string) {
 		consumer, err := svc.GetConsumer(storeid, number)
 		if err != nil {
 			c.Error(err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
 
 		c.JSON(200, consumer)
@@ -109,6 +127,8 @@ func Run(done chan string) {
 		allConsumers, err := svc.GetAllConsumers(storeid)
 		if err != nil {
 			c.Error(err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
 
 		c.JSON(200, allConsumers)
