@@ -14,6 +14,8 @@ import (
 const (
 	// ErrorNotFoundStore for store not found
 	ErrorNotFoundStore = "Não foi encontrado o estabelecimento"
+	// ErrorNotFoundAllStores for store not found
+	ErrorNotFoundAllStores = "Erro ao pesquisar nomes dos estabelecimentos"
 	// ErrorNotFoundConsumer for consumer not found
 	ErrorNotFoundConsumer = "Não foi possível encontrar consumidor"
 	// ErrorConsumerExists for consumer already exists
@@ -78,6 +80,34 @@ func (repo *StoreRepositoryImpl) RemoveStore(id string) error {
 	}
 
 	return nil
+}
+
+// GetAllStores implements
+// TODO: usar find com setProjection
+func (repo *StoreRepositoryImpl) GetAllStores() ([]string, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	cursor, err := repo.collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, errors.New(ErrorNotFoundAllStores)
+	}
+
+	var stores []*domain.Store
+
+	err = cursor.All(ctx, &stores)
+	if err != nil {
+		return nil, err
+	}
+
+	var result []string
+
+	for _, value := range stores {
+		result = append(result, value.Name)
+	}
+
+	return result, nil
 }
 
 // GetStoreByID implements

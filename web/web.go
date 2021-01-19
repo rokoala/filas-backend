@@ -53,6 +53,18 @@ func Run(done chan string) {
 		c.JSON(200, nil)
 	})
 
+	router.GET("/stores", func(c *gin.Context) {
+
+		stores, err := svc.GetAllStores()
+		if err != nil {
+			c.Error(err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(200, stores)
+	})
+
 	router.GET("/store/name/:name", func(c *gin.Context) {
 		name := c.Param("name")
 

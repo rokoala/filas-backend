@@ -88,6 +88,16 @@ func (svc *StoreServiceImpl) RemoveStore(id string) error {
 	return nil
 }
 
+// GetAllStores implements
+func (svc *StoreServiceImpl) GetAllStores() ([]string, error) {
+	stores, err := svc.storeRepository.GetAllStores()
+	if err != nil {
+		return nil, err
+	}
+
+	return stores, nil
+}
+
 // GetStore implements
 func (svc *StoreServiceImpl) GetStore(name string) (*domain.Store, error) {
 

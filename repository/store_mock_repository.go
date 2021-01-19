@@ -58,6 +58,17 @@ func (repo *StoreMockRepositoryImpl) RemoveStore(id string) error {
 	return errors.New(ErrorNotFoundStore)
 }
 
+// GetAllStores implements
+func (repo *StoreMockRepositoryImpl) GetAllStores() ([]string, error) {
+	var result []string
+
+	for _, value := range repo.mockStore.aStore {
+		result = append(result, value.Name)
+	}
+
+	return result, nil
+}
+
 // GetStoreByID implements
 func (repo *StoreMockRepositoryImpl) GetStoreByID(id string) (*domain.Store, error) {
 	for _, elem := range repo.mockStore.aStore {

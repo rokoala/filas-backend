@@ -6,6 +6,7 @@ import "github.com/rokoga/filas-backend/domain"
 type StoreService interface {
 	Create(URLname, name string) (*domain.Store, error)
 	RemoveStore(id string) error
+	GetAllStores() ([]string, error)
 	GetStore(name string) (*domain.Store, error)
 	GetStoreByID(id string) (*domain.Store, error)
 	AddConsumer(id, name, phone string) (string, error)

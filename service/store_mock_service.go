@@ -69,6 +69,16 @@ func (svc *StoreMockServiceImpl) RemoveStore(id string) error {
 	return nil
 }
 
+// GetAllStores implements
+func (svc *StoreMockServiceImpl) GetAllStores() ([]string, error) {
+	stores, err := svc.storeRepository.GetAllStores()
+	if err != nil {
+		return nil, err
+	}
+
+	return stores, nil
+}
+
 // GetStore implements
 func (svc *StoreMockServiceImpl) GetStore(name string) (*domain.Store, error) {
 
