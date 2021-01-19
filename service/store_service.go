@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -61,7 +62,7 @@ func (svc *StoreServiceImpl) Create(name string) (*domain.Store, error) {
 	}
 
 	urlBase := "http://app.filas.com"
-	accessURL := fmt.Sprintf("%s/%s", urlBase, name)
+	accessURL := fmt.Sprintf("%s/%s", urlBase, strings.ToLower(name))
 
 	store := domain.Store{
 		Name:    name,

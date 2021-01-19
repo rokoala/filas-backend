@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/rokoga/filas-backend/domain"
@@ -42,7 +43,7 @@ func (svc *StoreMockServiceImpl) Create(name string) (*domain.Store, error) {
 	}
 
 	urlBase := "http://app.filas.com"
-	accessURL := fmt.Sprintf("%s/%s", urlBase, name)
+	accessURL := fmt.Sprintf("%s/%s", urlBase, strings.ToLower(name))
 
 	store := domain.Store{
 		Name:    name,
