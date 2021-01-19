@@ -24,9 +24,9 @@ func NewStoreMockServiceImpl() StoreService {
 }
 
 // Create implements
-func (svc *StoreMockServiceImpl) Create(URLname, name string) (*domain.Store, error) {
+func (svc *StoreMockServiceImpl) Create(name string) (*domain.Store, error) {
 
-	if URLname == "" || name == "" {
+	if name == "" {
 		return nil, errors.New(ErrorArgumentNotValidAddStore)
 	}
 
@@ -41,9 +41,12 @@ func (svc *StoreMockServiceImpl) Create(URLname, name string) (*domain.Store, er
 		return nil, errors.New(ErrorStoreExists)
 	}
 
+	urlBase := "http://app.filas.com"
+	accessURL := fmt.Sprintf("%s/%s", urlBase, name)
+
 	store := domain.Store{
 		Name:    name,
-		URLName: URLname,
+		URLName: accessURL,
 	}
 
 	newStore, err := svc.storeRepository.Create(&store)

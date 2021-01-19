@@ -43,9 +43,9 @@ func NewStoreServiceImpl(db *mongo.Collection) StoreService {
 }
 
 // Create implements
-func (svc *StoreServiceImpl) Create(URLname, name string) (*domain.Store, error) {
+func (svc *StoreServiceImpl) Create(name string) (*domain.Store, error) {
 
-	if URLname == "" || name == "" {
+	if name == "" {
 		return nil, errors.New(ErrorArgumentNotValidAddStore)
 	}
 
@@ -60,9 +60,12 @@ func (svc *StoreServiceImpl) Create(URLname, name string) (*domain.Store, error)
 		return nil, errors.New(ErrorStoreExists)
 	}
 
+	urlBase := "http://app.filas.com"
+	accessURL := fmt.Sprintf("%s/%s", urlBase, name)
+
 	store := domain.Store{
 		Name:    name,
-		URLName: URLname,
+		URLName: accessURL,
 	}
 
 	newStore, err := svc.storeRepository.Create(&store)
