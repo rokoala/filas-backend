@@ -14,19 +14,18 @@ func TestCreate(t *testing.T) {
 	svc := NewStoreMockServiceImpl()
 
 	tests := []struct {
-		urlName    string
 		name       string
 		resultURL  string
 		resultName string
 		err        error
 	}{
-		{urlName: "outback", name: "Outback", resultURL: "outback", resultName: "Outback", err: nil},
-		{urlName: "jeronimo", name: "Jeronimo", resultURL: "jeronimo", resultName: "Jeronimo", err: nil},
-		{urlName: "", name: "", resultURL: "", resultName: "", err: errors.New(ErrorArgumentNotValidAddStore)},
+		{name: "Outback", resultURL: "http://app.filas.com/outback", resultName: "Outback", err: nil},
+		{name: "Jeronimo", resultURL: "http://app.filas.com/jeronimo", resultName: "Jeronimo", err: nil},
+		{name: "", resultURL: "", resultName: "", err: errors.New(ErrorArgumentNotValidAddStore)},
 	}
 
 	for _, test := range tests {
-		store, err := svc.Create(test.urlName, test.name)
+		store, err := svc.Create(test.name)
 		if err == nil {
 			assert.NotNil(t, store)
 			assert.Equal(t, test.resultURL, store.URLName)
@@ -45,10 +44,9 @@ func TestRemoveStore(t *testing.T) {
 
 	svc := NewStoreMockServiceImpl()
 
-	URLname := "outback"
 	name := "Outback"
 
-	store, err := svc.Create(URLname, name)
+	store, err := svc.Create(name)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, store)
@@ -74,10 +72,9 @@ func TestGetStore(t *testing.T) {
 
 	svc := NewStoreMockServiceImpl()
 
-	URLname := "outback"
 	name := "Outback"
 
-	store, err := svc.Create(URLname, name)
+	store, err := svc.Create(name)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, store)
@@ -88,7 +85,7 @@ func TestGetStore(t *testing.T) {
 		resultName string
 		err        error
 	}{
-		{name: "Outback", resultURL: "outback", resultName: "Outback", err: nil},
+		{name: "Outback", resultURL: "http://app.filas.com/outback", resultName: "Outback", err: nil},
 		{name: "Jeronimo", resultURL: "", resultName: "", err: errors.New(repository.ErrorNotFoundStore)},
 		{name: "", resultURL: "", resultName: "", err: errors.New(ErrorArgumentNotValidGetStore)},
 	}
@@ -112,10 +109,9 @@ func TestAddConsumer(t *testing.T) {
 
 	svc := NewStoreMockServiceImpl()
 
-	URLname := "outback"
 	name := "Outback"
 
-	store, err := svc.Create(URLname, name)
+	store, err := svc.Create(name)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, store)
@@ -149,10 +145,9 @@ func TestRemoveConsumer(t *testing.T) {
 
 	svc := NewStoreMockServiceImpl()
 
-	URLname := "outback"
 	name := "Outback"
 
-	store, err := svc.Create(URLname, name)
+	store, err := svc.Create(name)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, store)
@@ -188,10 +183,9 @@ func TestGetConsumer(t *testing.T) {
 
 	svc := NewStoreMockServiceImpl()
 
-	URLname := "outback"
 	name := "Outback"
 
-	store, err := svc.Create(URLname, name)
+	store, err := svc.Create(name)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, store)
@@ -235,10 +229,9 @@ func TestGetAllConsumers(t *testing.T) {
 
 	svc := NewStoreMockServiceImpl()
 
-	URLname := "outback"
 	name := "Outback"
 
-	store, err := svc.Create(URLname, name)
+	store, err := svc.Create(name)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, store)

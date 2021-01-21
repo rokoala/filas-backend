@@ -2,8 +2,7 @@ package vo
 
 // CreateRequest struct
 type CreateRequest struct {
-	Name    string `json:"name"`
-	URLName string `json:"urlName"`
+	Name string `json:"name"`
 }
 
 // AddConsumerRequest struct

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -43,9 +44,9 @@ func NewStoreServiceImpl(db *mongo.Collection) StoreService {
 }
 
 // Create implements
-func (svc *StoreServiceImpl) Create(URLname, name string) (*domain.Store, error) {
+func (svc *StoreServiceImpl) Create(name string) (*domain.Store, error) {
 
-	if URLname == "" || name == "" {
+	if name == "" {
 		return nil, errors.New(ErrorArgumentNotValidAddStore)
 	}
 
@@ -60,9 +61,12 @@ func (svc *StoreServiceImpl) Create(URLname, name string) (*domain.Store, error)
 		return nil, errors.New(ErrorStoreExists)
 	}
 
+	urlBase := "http://app.filas.com"
+	accessURL := fmt.Sprintf("%s/%s", urlBase, strings.ToLower(name))
+
 	store := domain.Store{
 		Name:    name,
-		URLName: URLname,
+		URLName: accessURL,
 	}
 
 	newStore, err := svc.storeRepository.Create(&store)
@@ -86,6 +90,16 @@ func (svc *StoreServiceImpl) RemoveStore(id string) error {
 	}
 
 	return nil
+}
+
+// GetAllStores implements
+func (svc *StoreServiceImpl) GetAllStores() ([]string, error) {
+	stores, err := svc.storeRepository.GetAllStores()
+	if err != nil {
+		return nil, err
+	}
+
+	return stores, nil
 }
 
 // GetStore implements
